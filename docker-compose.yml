@@ -4,7 +4,7 @@ services:
     networks:
       - dokploy-network
     volumes:
-      - ./tyk.standalone.conf:/opt/tyk-gateway/tyk.conf
+      - ./tyk.with_dashboard.conf:/opt/tyk-gateway/tyk.conf
       - ./apps:/opt/tyk-gateway/apps
       - ./middleware:/opt/tyk-gateway/middleware
       - ./certs:/opt/tyk-gateway/certs
