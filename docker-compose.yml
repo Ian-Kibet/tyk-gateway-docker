@@ -1,11 +1,7 @@
-version: '3.3'
 services:
   tyk-gateway:
-    image: docker.tyk.io/tyk-gateway/tyk-gateway:v5.5.0
-    ports:
-      - 8080:8080
+    image: tykio/tyk-gateway
     networks:
-      - tyk
       - dokploy-network
     volumes:
       - ./tyk.standalone.conf:/opt/tyk-gateway/tyk.conf
@@ -20,10 +16,7 @@ services:
   tyk-redis:
     image: redis:alpine
     networks:
-      - tyk
       - dokploy-network
       
-
 networks:
-  tyk:
   dokploy-network:
