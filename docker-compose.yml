@@ -33,7 +33,7 @@ services:
     image: tykio/tyk-dashboard:latest
     container_name: tyk-dashboard
     environment:
-      - TYK_DB_HOST=mongo
+      - TYK_DB_HOST=tyk-mongo
       - TYK_DB_PORT=27017
       - TYK_DB_NAME=tyk
       - TYK_DB_USER=admin
