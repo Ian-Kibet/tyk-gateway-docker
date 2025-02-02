@@ -1,22 +1,52 @@
 services:
+  redis:
+    image: redis:latest
+    container_name: tyk-redis
+    networks:
+      - dokploy-network
+
+  mongo:
+    image: mongo:latest
+    container_name: tyk-mongo
+    networks:
+      - dokploy-network
+
   tyk-gateway:
-    image: tykio/tyk-gateway
-    networks:
-      - dokploy-network
-    volumes:
-      - ./tyk.with_dashboard.conf:/opt/tyk-gateway/tyk.conf
-      - ./apps:/opt/tyk-gateway/apps
-      - ./middleware:/opt/tyk-gateway/middleware
-      - ./certs:/opt/tyk-gateway/certs
-      - ./policies:/opt/tyk-gateway/policies
+    image: tykio/tyk-gateway:latest
+    container_name: tyk-gateway
     environment:
-      - TYK_GW_SECRET=foo
+      - TYK_GW_API_HOST=http://localhost:8080
+      - TYK_GW_SECRET=secret
+      - TYK_GW_NODE_ID=unique-node-id
+      - TYK_GW_LISTEN_PORT=8080
+      - TYK_GW_STORAGE=mongo
+      - TYK_GW_MONGO_URI=mongodb://tyk-mongo:27017/tyk
+      - TYK_GW_REDIS_HOST=redis
+      - TYK_GW_REDIS_PORT=6379
     depends_on:
-      - tyk-redis
-  tyk-redis:
-    image: redis:alpine
+      - mongo
+      - redis
     networks:
       - dokploy-network
-      
+
+  tyk-dashboard:
+    image: tykio/tyk-dashboard:latest
+    container_name: tyk-dashboard
+    environment:
+      - TYK_DB_HOST=mongo
+      - TYK_DB_PORT=27017
+      - TYK_DB_NAME=tyk
+      - TYK_DB_USER=admin
+      - TYK_DB_PASSWORD=admin
+      - TYK_REDIS_HOST=redis
+      - TYK_REDIS_PORT=6379
+      - TYK_DASHBOARD_SECRET=secret
+      - TYK_GW_URL=http://tyk-gateway:8080
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - dokploy-network
+
 networks:
   dokploy-network:
